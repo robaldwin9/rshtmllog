@@ -1,17 +1,6 @@
 
 use std::fmt::{self,Formatter,Display};
 
-// constants for opening and closing tags
-const SGT: &str = "/>";
-const LT: &str = "<";
-const GT: &str = ">";
-
-// struct for an html doc
-pub struct HtmlDoc {
-
-	tags: Vec<Tag>
-}
-
 // struct for html tag
 pub struct Tag {
 
@@ -32,10 +21,10 @@ impl Tag {
 		}
 	}
 
-		pub fn display(&self) {
+	pub fn display(&self) {
 
-		println!("{}{} {}{}{}{}{}{}",LT,self.tagtype, 
-			self.properties,GT,self.content, LT, self.tagtype, SGT);
+		println!("{}{} {}{}{}{}{}{}","<",self.tagtype, 
+			self.properties,">",self.content, "<", self.tagtype, "/>");
 	}
 
 
@@ -48,6 +37,12 @@ impl Display for Tag {
 	}
 }
 
+// struct for an html doc
+pub struct HtmlDoc {
+	
+	tags: Vec<Tag>
+}
+
 // impliment functions for HtmlDoc struct
 impl HtmlDoc {
 	pub fn display(&self) {
@@ -56,3 +51,4 @@ impl HtmlDoc {
 		}
 	}
 }
+
