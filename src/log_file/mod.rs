@@ -14,9 +14,6 @@ pub struct Entry {
 
 impl Entry {
     pub fn new(level: LogLevel, content: String) -> Entry {
-        Entry {
-            level: level,
-            content: content,
-        }
+        Entry { level, content }
     }
 }

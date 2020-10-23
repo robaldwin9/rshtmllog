@@ -58,8 +58,8 @@ pub struct Tag {
 impl Property {
     pub fn new(propertyname: String, propertyvalue: String) -> Property {
         Property {
-            propertyname: propertyname,
-            propertyvalue: propertyvalue,
+            propertyname,
+            propertyvalue,
         }
     }
 }
@@ -74,25 +74,13 @@ impl Display for Property {
 impl Tag {
     pub fn new(properties: Property, tagtype: TagType, content: String) -> Tag {
         Tag {
-            properties: properties,
-            tagtype: tagtype,
-            content: content,
+            properties,
+            tagtype,
+            content,
         }
     }
 
-
-        pub fn to_string(&self) -> String {
-        	let stringval: String =  format!("{}{}{}{}{}",
-            self.tagtype.open_tag(),
-            self.properties,
-            GREATER_THAN,
-            self.content,
-            self.tagtype.close_tag());
-            return (stringval).to_string();
-        }
-
-
-            pub fn display(&self) {
+    pub fn display(&self) {
         println!(
             "{}{}{}{}{}",
             self.tagtype.open_tag(),
@@ -102,10 +90,7 @@ impl Tag {
             self.tagtype.close_tag()
         );
     }
-    }
-
-
-
+}
 
 impl Display for Tag {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {

@@ -1,9 +1,9 @@
 extern crate doclib;
 
 use doclib::html_file::*;
-use std::io::Write;                                                                                                                                                                  
-                                                                                                                                                             
-use std::fs::File;   
+use std::io::Write;
+
+use std::fs::File;
 
 use std::env;
 
@@ -35,11 +35,6 @@ fn main() {
                     html_doc
                         .tags
                         .push(Tag::new(debug_class, TagType::DIV, lower_log_line))
-                } else if log_line.contains("info") {
-                    let info_class = Property::new("class".to_string(), "info".to_string());
-                    html_doc
-                        .tags
-                        .push(Tag::new(info_class, TagType::DIV, lower_log_line))
                 } else {
                     let info_class = Property::new("class".to_string(), "info".to_string());
                     html_doc
@@ -52,14 +47,15 @@ fn main() {
 
     html_doc.display();
 
-     let mut f = File::create("output.html").expect("Unable to create file");                                                                                                          
-    for i in html_doc.tags{                                                                                                                                                                  
-        f.write_all(i.to_string().as_bytes()).expect("Unable to write data");                                                                                                                            
-    }   
+    let mut f = File::create("output.html").expect("Unable to create file");
+    for i in html_doc.tags {
+        f.write_all(i.to_string().as_bytes())
+            .expect("Unable to write data");
+    }
 }
 
 fn get_path(args: Vec<String>) -> String {
-    return args[0].clone();
+    args[0].clone()
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
