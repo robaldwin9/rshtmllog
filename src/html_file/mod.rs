@@ -1,4 +1,5 @@
 const GREATER_THAN: &str = ">";
+const SYTLE_SHEET: &str = " <link rel=\"stylesheet\" href=\"rshtml.css\">";
 
 pub enum TagType {
     DIV,
@@ -50,6 +51,7 @@ pub struct Property {
 
 // struct for html tag
 pub struct Tag {
+
     pub properties: Property,
     pub tagtype: TagType,
     pub content: String,
@@ -120,5 +122,24 @@ impl HtmlDoc {
         for tag in self.tags.iter() {
             tag.display();
         }
+    }
+}
+
+
+impl fmt::Display for HtmlDoc {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}{}{}{}{}{}{}{}", TagType::HTML.open_tag(), 
+        	GREATER_THAN, 
+        	TagType::HEAD.open_tag(),
+        	GREATER_THAN,SYTLE_SHEET,
+        	TagType::HEAD.close_tag(), 
+        	TagType::BODY.open_tag(), 
+        	GREATER_THAN )?;
+
+        for i in &self.tags {
+            write!(f, "{}", i.to_string())?;
+        }
+        write!(f, "{}{}", TagType::BODY.close_tag(),TagType::HTML.close_tag())?;
+        Ok(())
     }
 }

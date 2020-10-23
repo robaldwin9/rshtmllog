@@ -1,21 +1,13 @@
-extern crate doclib;
-
-use doclib::html_file::*;
-use std::io::Write;
-
-use std::fs::File;
-
-use std::env;
-
-use std::io::{self, BufRead};
 use std::path::Path;
+use doclib::html_file::*;
+use std::{fs::File};
+use std::io::{self, BufRead, Write};
+
 
 fn main() {
-    let mut html_doc = HtmlDoc::new();
 
-    //let mut logs = vec![];
-    let path = get_path(env::args().collect());
-    if let Ok(lines) = read_lines("D:/Git/test.log") {
+    let mut html_doc = HtmlDoc::new();
+    if let Ok(lines) = read_lines("LICENSE") {
         for line in lines {
             if let Ok(log_line) = line {
                 let lower_log_line = log_line.to_lowercase().clone();
@@ -35,6 +27,10 @@ fn main() {
                     html_doc
                         .tags
                         .push(Tag::new(debug_class, TagType::DIV, lower_log_line))
+                } else if lower_log_line == "" {
+
+
+
                 } else {
                     let info_class = Property::new("class".to_string(), "info".to_string());
                     html_doc
@@ -45,14 +41,12 @@ fn main() {
         }
     }
 
-    html_doc.display();
+	    html_doc.display();
 
-    let mut f = File::create("output.html").expect("Unable to create file");
-    for i in html_doc.tags {
-        f.write_all(i.to_string().as_bytes())
-            .expect("Unable to write data");
+	    let mut f = File::create("output.html").expect("Unable to create file");
+	    f.write_all(html_doc.to_string().as_bytes()).expect("Unable to write data");
     }
-}
+
 
 fn get_path(args: Vec<String>) -> String {
     args[0].clone()
