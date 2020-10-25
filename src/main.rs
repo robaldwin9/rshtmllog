@@ -11,11 +11,11 @@ fn main() {
     let filename = args[0].clone();
 
     // String constants
-    const CLASS: &'static str = "class";
-    const WARN: &'static str = "warn";
-    const ERROR: &'static str = "error";
-    const DEBUG: &'static str = "debug";
-    const INFO: &'static str = "info";
+    const CLASS: &str = "class";
+    const WARN:  &str = "warn";
+    const ERROR: &str = "error";
+    const DEBUG: &str = "debug";
+    const INFO:  &str = "info";
 
     // Html properties, or classes applied based on log level */
     let warn_class = Property::new(CLASS, WARN);
@@ -44,26 +44,25 @@ fn main() {
         }
     }
 
-    // Parse path to create file name from log file name
-    let mut name: &str;
 
+    let mut name: &str;
     // Universal directory seperator
-    if filename.contains("/") {
-        let split = filename.split("/");
+    if filename.contains('/') {
+        let split = filename.split('/');
         let vec = split.collect::<Vec<&str>>();
         name = vec[vec.len() - 1];
 
-        let split2 = name.split(".");
+        let split2 = name.split('.');
         let vec = split2.collect::<Vec<&str>>();
         name = vec[0];
 
     // Windows  specific path seperator
-    } else if filename.contains("\\") {
-        let split = filename.split("\\");
+    } else if filename.contains('\\') {
+        let split = filename.split('\\');
         let vec = split.collect::<Vec<&str>>();
         name = vec[vec.len() - 1];
 
-        let split2 = name.split(".");
+        let split2 = name.split('.');
         let vec = split2.collect::<Vec<&str>>();
         name = vec[0];
 
