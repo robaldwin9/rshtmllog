@@ -36,6 +36,7 @@ impl TagType {
             TagType::SCRIPT => "</script>".to_string(),
             TagType::FOOTER => "</footer>".to_string(),
             TagType::BODY => "</body>".to_string(),
+            TagType::HTML => "</html>".to_string(),
         }
     }
 }
@@ -52,6 +53,7 @@ pub struct Tag {
     pub properties: Property,
     pub tagtype: TagType,
     pub content: String,
+    pub children: Vec<Tag>,
 }
 
 impl Property {
@@ -65,7 +67,11 @@ impl Property {
 
 impl Display for Property {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, " {}={}", self.propertyname, self.propertyvalue)
+        if self.propertyname.len() > 0 && self.propertyvalue.len() > 0 {
+            write!(f, " {}={}", self.propertyname, self.propertyvalue)
+        } else {
+            write!(f, "")
+        }
     }
 }
 
@@ -76,18 +82,22 @@ impl Tag {
             properties,
             tagtype,
             content,
+            children: vec![],
         }
     }
 
     pub fn display(&self) {
         println!(
-            "{}{}{}{}{}",
+            "{}{}{}",
             self.tagtype.open_tag(),
             self.properties,
-            GREATER_THAN,
-            self.content,
-            self.tagtype.close_tag()
+            GREATER_THAN
         );
+
+        for item in self.children.iter() {
+            item.display();
+        }
+        println!("{}{}", self.content, self.tagtype.close_tag());
     }
 }
 
@@ -95,13 +105,16 @@ impl Display for Tag {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(
             f,
-            "{}{}{}{}{}",
+            "{}{}{}",
             self.tagtype.open_tag(),
             self.properties,
-            GREATER_THAN,
-            self.content,
-            self.tagtype.close_tag()
-        )
+            GREATER_THAN
+        )?;
+
+        for child in self.children.iter() {
+            write!(f, "{}", child.to_string())?;
+        }
+        write!(f, "{}{}", self.content, self.tagtype.close_tag())
     }
 }
 
