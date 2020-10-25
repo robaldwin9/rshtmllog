@@ -13,7 +13,6 @@ pub enum TagType {
 }
 
 impl TagType {
-    // open tag
     pub fn open_tag(&self) -> String {
         match *self {
             TagType::DIV => "<div".to_string(),
@@ -27,7 +26,6 @@ impl TagType {
         }
     }
 
-    // close tag
     pub fn close_tag(&self) -> String {
         match *self {
             TagType::DIV => "</div>".to_string(),
@@ -43,22 +41,21 @@ impl TagType {
 }
 
 use std::fmt::{self, Display, Formatter};
-
+#[derive(Copy, Clone)]
 pub struct Property {
-    pub propertyname: String,
-    pub propertyvalue: String,
+    pub propertyname: &'static str,
+    pub propertyvalue: &'static str,
 }
 
 // struct for html tag
 pub struct Tag {
-
     pub properties: Property,
     pub tagtype: TagType,
     pub content: String,
 }
 
 impl Property {
-    pub fn new(propertyname: String, propertyvalue: String) -> Property {
+    pub fn new(propertyname: &'static str, propertyvalue: &'static str) -> Property {
         Property {
             propertyname,
             propertyvalue,
@@ -125,21 +122,30 @@ impl HtmlDoc {
     }
 }
 
-
 impl fmt::Display for HtmlDoc {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}{}{}{}{}{}{}{}", TagType::HTML.open_tag(), 
-        	GREATER_THAN, 
-        	TagType::HEAD.open_tag(),
-        	GREATER_THAN,SYTLE_SHEET,
-        	TagType::HEAD.close_tag(), 
-        	TagType::BODY.open_tag(), 
-        	GREATER_THAN )?;
+        write!(
+            f,
+            "{}{}{}{}{}{}{}{}",
+            TagType::HTML.open_tag(),
+            GREATER_THAN,
+            TagType::HEAD.open_tag(),
+            GREATER_THAN,
+            SYTLE_SHEET,
+            TagType::HEAD.close_tag(),
+            TagType::BODY.open_tag(),
+            GREATER_THAN
+        )?;
 
         for i in &self.tags {
             write!(f, "{}", i.to_string())?;
         }
-        write!(f, "{}{}", TagType::BODY.close_tag(),TagType::HTML.close_tag())?;
+        write!(
+            f,
+            "{}{}",
+            TagType::BODY.close_tag(),
+            TagType::HTML.close_tag()
+        )?;
         Ok(())
     }
 }

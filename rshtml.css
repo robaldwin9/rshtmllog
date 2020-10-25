@@ -1,20 +1,36 @@
 .info {
 
-	background-color: gray;
-
+	 background-image: linear-gradient(lightgray, black);
 }
 
 .error {
-	background-color: red;
+	 background-image: linear-gradient(red, black);
 }
 
 .warn {
-	background-color: yellow;
+	 background-image: linear-gradient(yellow, black);
+	 vertical-align: middle;
+}
+
+html {
+	background-color: black;
 }
 
 div {
 
-	    height: 8%;
-		box-shadow: 10px 10px 8px 10px #FFFFFF;
+	    
+		border-radius: 5px;
 		position: relative;
+		font-size: 1.9vw;
+		margin-bottom: 5px;
+		color:white;
+		text-align: center;
+		vertical-align: middle;
+		height:5vw;
+        line-height: 5vw;
+}
+
+
+div:hover {
+	 transform: scale(1.5);
 }
