@@ -1,3 +1,8 @@
+
+html {
+	background-color: black;
+}
+
 .info {
 	background-color: gray;
 }
@@ -12,9 +17,22 @@
 
 }
 
-html {
-	background-color: black;
+ button
+{
+	width: 10%;
+	height: 5%;
+	text-align: center;
+	border-radius: 5px;
+	margin-left: 5px;
+	outline: 0;
 }
+
+h3 {
+
+	color: white;
+	display: inline-block;
+}
+
 
 div {
 
