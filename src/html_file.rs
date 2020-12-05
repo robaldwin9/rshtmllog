@@ -63,7 +63,7 @@ pub struct Property {
 
 // struct for html tag
 pub struct Tag {
-    pub properties: Property,
+    pub properties: Vec<Property>,
     pub tagtype: TagType,
     pub content: String,
     pub children: Vec<Tag>,
@@ -76,12 +76,21 @@ impl Property {
             propertyvalue,
         }
     }
+
+        pub fn display(&self) {
+           if self.propertyname.len() > 0 && self.propertyvalue.len() > 0 {
+            println!( " {}={} ", self.propertyname, self.propertyvalue)
+        } else {
+            println!("")
+        }
+            
+    }
 }
 
 impl Display for Property {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         if self.propertyname.len() > 0 && self.propertyvalue.len() > 0 {
-            write!(f, " {}={}", self.propertyname, self.propertyvalue)
+            write!(f, " {}={} ", self.propertyname, self.propertyvalue)
         } else {
             write!(f, "")
         }
@@ -90,9 +99,9 @@ impl Display for Property {
 
 // impliment functions for tag struct
 impl Tag {
-    pub fn new(properties: Property, tagtype: TagType, content: String) -> Tag {
+    pub fn new(tagtype: TagType, content: String) -> Tag {
         Tag {
-            properties,
+            properties: vec![],
             tagtype,
             content,
             children: vec![],
@@ -101,15 +110,23 @@ impl Tag {
 
     pub fn display(&self) {
         println!(
-            "{}{}{}",
+            "{}",
             self.tagtype.open_tag(),
-            self.properties,
-            GREATER_THAN
+            //self.properties,
+           // GREATER_THAN
         );
+
+           
+               for property in self.properties.iter() {
+            property.display();
+        }
+
+        println!("{}", GREATER_THAN);
 
         for item in self.children.iter() {
             item.display();
         }
+
         println!("{}{}", self.content, self.tagtype.close_tag());
     }
 }
@@ -118,11 +135,17 @@ impl Display for Tag {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(
             f,
-            "{}{}{}",
+            "{}",
             self.tagtype.open_tag(),
-            self.properties,
-            GREATER_THAN
+
         )?;
+
+
+          for property in self.properties.iter() {
+            write!(f, "{}", property.to_string())?;
+        }
+
+        write!(f, "{}", GREATER_THAN)?;
 
         for child in self.children.iter() {
             write!(f, "{}", child.to_string())?;

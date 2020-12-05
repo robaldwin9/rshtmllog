@@ -30,12 +30,18 @@ fn main() {
     let mut debug_count = 0;
     let mut info_count = 0;
 
-    let filter_header = Tag::new(Property::new("", ""), TagType::H3, "filters".to_string());
+    let filter_header = Tag::new(TagType::H3, "filters".to_string());
     html_doc.tags.push(filter_header);
-    let warn_button = Tag::new(warn_class, TagType::BUTTON, "Warn".to_string());
-    let error_button = Tag::new(error_class, TagType::BUTTON, "Error".to_string());
-    let debug_button = Tag::new(debug_class, TagType::BUTTON, "Debug".to_string());
-    let info_button = Tag::new(info_class, TagType::BUTTON, "Info".to_string());
+    let mut warn_button = Tag::new(TagType::BUTTON, "Warn".to_string());
+    warn_button.properties.push(warn_class);
+    let mut error_button = Tag::new(TagType::BUTTON, "Error".to_string());
+    error_button.properties.push(error_class);
+    let mut debug_button = Tag::new( TagType::BUTTON, "Debug".to_string());
+    debug_button.properties.push(debug_class);
+    let mut info_button = Tag::new( TagType::BUTTON, "Info".to_string());
+    info_button.properties.push(info_class);
+    println!("{}", info_button);
+
     html_doc.tags.push(debug_button);
     html_doc.tags.push(warn_button);
     html_doc.tags.push(error_button);
@@ -123,8 +129,9 @@ where
 
 // add div, with paragraph child containing log line
 fn add_log_level_tag(propterty: Property, text: String, html_doc: &mut doclib::html_file::HtmlDoc) {
-    let mut div = Tag::new(propterty, TagType::DIV, "".to_string());
+    let mut div = Tag::new( TagType::DIV, "".to_string());
+    div.properties.push(propterty);
     div.children
-        .push(Tag::new(Property::new("", ""), TagType::P, text));
+        .push(Tag::new(TagType::P, text));
     html_doc.tags.push(div);
 }
