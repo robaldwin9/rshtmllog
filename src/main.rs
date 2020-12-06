@@ -9,7 +9,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let mut html_doc = HtmlDoc::new();
     html_doc.style = "<link rel=\"stylesheet\" href=\"src/css/rshtml.css\">".to_string();
-    html_doc.script = "<script src=\"src/js/YourExternalJQueryScripts.js\"></script>".to_string();
+    html_doc.script = "<script src=\"src/js/rshtmllog.js\"></script>".to_string();
     let filename = args[0].clone();
 
     // String constants
@@ -18,12 +18,15 @@ fn main() {
     const ERROR: &str = "error";
     const DEBUG: &str = "debug";
     const INFO: &str = "info";
+    const ON_CLICK: &str = "onclick";
+    const JS_FUNCTION: &str = "\"filter(this);\"";
 
     // Html properties, or classes applied based on log level */
     let warn_class = Property::new(CLASS, WARN);
     let error_class = Property::new(CLASS, ERROR);
     let debug_class = Property::new(CLASS, DEBUG);
     let info_class = Property::new(CLASS, INFO);
+    let onclick_property = Property::new(ON_CLICK, JS_FUNCTION);
 
     let mut warn_count = 0;
     let mut error_count = 0;
@@ -32,14 +35,23 @@ fn main() {
 
     let filter_header = Tag::new(TagType::H3, "filters".to_string());
     html_doc.tags.push(filter_header);
+
     let mut warn_button = Tag::new(TagType::BUTTON, "Warn".to_string());
     warn_button.properties.push(warn_class);
+    warn_button.properties.push(onclick_property);
+
     let mut error_button = Tag::new(TagType::BUTTON, "Error".to_string());
     error_button.properties.push(error_class);
+    error_button.properties.push(onclick_property);
+
     let mut debug_button = Tag::new( TagType::BUTTON, "Debug".to_string());
     debug_button.properties.push(debug_class);
+    debug_button.properties.push(onclick_property);
+
     let mut info_button = Tag::new( TagType::BUTTON, "Info".to_string());
     info_button.properties.push(info_class);
+    info_button.properties.push(onclick_property);
+
     println!("{}", info_button);
 
     html_doc.tags.push(debug_button);
