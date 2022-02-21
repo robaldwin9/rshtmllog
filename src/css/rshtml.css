@@ -1,20 +1,29 @@
 
-html {
+
+
+body {
 	background-color: black;
 }
 
 .info {
-	background-color: gray;
+	background-color: green;
 }
 
 .error {
-
 	 background-color: #fa4d27;
 }
 
 .warn {
 	 background-color: #ffb146;
 
+}
+
+.debug {
+	background-color: gray;
+}
+
+.trace {
+	background-color: #2171fc;
 }
 
  button
@@ -36,23 +45,29 @@ h3 {
 
 
 div {
-
-	    
+		margin-left: auto;
+		overflow: hidden;
 		border-radius: 5px;
 		position: relative;
 		font-size: 1vw;
+		line-height: 1.5vw; 
+		height:3vw;
+		width:  99%;
 		margin-bottom: 5px;
-		color:white;
-		text-align: center;
-		vertical-align: middle;
-		height:4vw;
-        line-height: 4vw;
-        text-overflow: break-word;
+		color:white;       
+}
+
+p {
+		height: 100%;
+	  	white-space: nowrap;
+  		overflow: hidden;
+  		text-overflow: ellipsis;
+
 }
 
 div:hover {
-	 		height:4.5vw;
+	 		height:3.5vw;
 	 		font-size: 1.1vw;
-            line-height: 4.5vw;
+            line-height:2vw;
 	  
 }

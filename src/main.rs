@@ -3,6 +3,7 @@ use std::env;
 use std::fs::File;
 use std::io::{self, BufRead, Write};
 use std::path::Path;
+use std::process;
 
 fn main() {
     // Get input file path
@@ -10,14 +11,16 @@ fn main() {
     let mut html_doc = HtmlDoc::new();
     html_doc.style = "<link rel=\"stylesheet\" href=\"src/css/rshtml.css\">".to_string();
     html_doc.script = "<script src=\"src/js/rshtmllog.js\"></script>".to_string();
-    let filename = args[0].clone();
+    let filename = args[1].clone();
+    println!("filename: {}", filename);
 
     // String constants
     const CLASS: &str = "class";
-    const WARN: &str = "warn";
-    const ERROR: &str = "error";
-    const DEBUG: &str = "debug";
-    const INFO: &str = "info";
+    const WARN: &str = "WARN";
+    const ERROR: &str = "ERROR";
+    const DEBUG: &str = "DEBUG";
+    const TRACE: &str = "TRACE";
+    const INFO: &str = "INFO";
     const ON_CLICK: &str = "onclick";
     const JS_FUNCTION: &str = "\"filter(this);\"";
 
@@ -26,77 +29,110 @@ fn main() {
     let error_class = Property::new(CLASS, ERROR);
     let debug_class = Property::new(CLASS, DEBUG);
     let info_class = Property::new(CLASS, INFO);
+    let trace_class = Property::new(CLASS, TRACE);
     let onclick_property = Property::new(ON_CLICK, JS_FUNCTION);
+
+    // Create Buttons
+    let filter_header = Tag::new(TagType::H3, "filters".to_string());
+    html_doc.tags.push(filter_header);
+    add_filter_button(
+        onclick_property,
+        "Trace".to_string(),
+        trace_class,
+        &mut html_doc,
+    );
+    add_filter_button(
+        onclick_property,
+        "Debug".to_string(),
+        debug_class,
+        &mut html_doc,
+    );
+    add_filter_button(
+        onclick_property,
+        "Info".to_string(),
+        info_class,
+        &mut html_doc,
+    );
+    add_filter_button(
+        onclick_property,
+        "Warn".to_string(),
+        warn_class,
+        &mut html_doc,
+    );
+    add_filter_button(
+        onclick_property,
+        "Error".to_string(),
+        error_class,
+        &mut html_doc,
+    );
 
     let mut warn_count = 0;
     let mut error_count = 0;
     let mut debug_count = 0;
     let mut info_count = 0;
-
-    let filter_header = Tag::new(TagType::H3, "filters".to_string());
-    html_doc.tags.push(filter_header);
-
-    let mut warn_button = Tag::new(TagType::BUTTON, "Warn".to_string());
-    warn_button.properties.push(warn_class);
-    warn_button.properties.push(onclick_property);
-
-    let mut error_button = Tag::new(TagType::BUTTON, "Error".to_string());
-    error_button.properties.push(error_class);
-    error_button.properties.push(onclick_property);
-
-    let mut debug_button = Tag::new( TagType::BUTTON, "Debug".to_string());
-    debug_button.properties.push(debug_class);
-    debug_button.properties.push(onclick_property);
-
-    let mut info_button = Tag::new( TagType::BUTTON, "Info".to_string());
-    info_button.properties.push(info_class);
-    info_button.properties.push(onclick_property);
-
-    println!("{}", info_button);
-
-    html_doc.tags.push(debug_button);
-    html_doc.tags.push(warn_button);
-    html_doc.tags.push(error_button);
-    html_doc.tags.push(info_button);
+    let mut trace_count = 0;
 
     // Parse input, and create htmldoc tags
-    if let Ok(lines) = read_lines("test.log") {
+    if let Ok(lines) = read_lines(filename.to_string()) {
         for line in lines {
             if let Ok(log_line) = line {
                 let lower_log_line = log_line.to_lowercase().clone();
-                println!("{}", lower_log_line);
+                let mut class = info_class;
+                let mut isnotloghead = false;
 
-                if log_line.contains(WARN) {
-                    if warn_count == 0 {
-                        warn_count += 1;
-                    }
-                    add_log_level_tag(warn_class, lower_log_line, &mut html_doc);
+                if log_line.contains(DEBUG) {
+                    debug_count += 1;
+                    class = debug_class;
+                } else if log_line.contains(INFO) {
+                    info_count += 1;
+                    class = info_class;
+                } else if log_line.contains(WARN) {
+                    warn_count += 1;
+                    class = warn_class;
                 } else if log_line.contains(ERROR) {
-                    if error_count == 0 {
-                        error_count += 1;
-                    }
-                    add_log_level_tag(error_class, lower_log_line, &mut html_doc);
-                } else if log_line.contains(DEBUG) {
-                    if debug_count == 0 {
-                        debug_count += 1;
-                    }
-                    add_log_level_tag(debug_class, lower_log_line, &mut html_doc);
-                } else if lower_log_line.is_empty() {
+                    error_count += 1;
+                    class = error_class;
+                } else if log_line.contains(TRACE) {
+                    trace_count += 1;
+                    class = trace_class;
+                } else if log_line.len() == 0 {
+                    continue;
                 } else {
-                    if info_count == 0 {
-                        info_count += 1;
-                    }
-                    add_log_level_tag(info_class, lower_log_line, &mut html_doc)
+                    isnotloghead = true;
+                    let index = html_doc.tags.len() - 1;
+                    let last_tag = &mut html_doc.tags[index];
+                    last_tag.content.push_str(&lower_log_line);
+                }
+
+                if !isnotloghead {
+                    add_log_level_tag(class, log_line, &mut html_doc)
                 }
             }
         }
+    } else {
+        println!("File not found: {}", filename);
+        process::exit(0x0100);
     }
 
+    println!("Trace Count: {}", trace_count);
+    println!("Debug Count: {}", debug_count);
+    println!("Info  Count: {}", info_count);
+    println!("Warn  Count: {}", warn_count);
+    println!("Error Count: {}", error_count);
+
     let mut name: &str;
+    let mut lhpath: String = "".to_string();
     // Universal directory seperator
     if filename.contains('/') {
         let split = filename.split('/');
         let vec = split.collect::<Vec<&str>>();
+        for (index, _element) in vec.iter().enumerate() {
+            if index != vec.len() - 1 {
+                let vecstr = String::from(vec[index]);
+                lhpath.push_str(&vecstr);
+                lhpath.push_str(&"/".to_string());
+            }
+        }
         name = vec[vec.len() - 1];
 
         let split2 = name.split('.');
@@ -107,6 +143,13 @@ fn main() {
     } else if filename.contains('\\') {
         let split = filename.split('\\');
         let vec = split.collect::<Vec<&str>>();
+        for (index, _element) in vec.iter().enumerate() {
+            if index != vec.len() - 1 {
+                let vecstr = String::from(vec[index]);
+                lhpath.push_str(&vecstr);
+                lhpath.push_str(&"\\".to_string());
+            }
+        }
         name = vec[vec.len() - 1];
 
         let split2 = name.split('.');
@@ -120,6 +163,8 @@ fn main() {
 
     // concatinate file name string
     let mut output_file_name: String = "".to_owned();
+    println!("lhpath: {}", lhpath);
+    output_file_name.push_str(&lhpath);
     output_file_name.push_str(name);
     output_file_name.push_str(".html");
 
@@ -141,9 +186,23 @@ where
 
 // add div, with paragraph child containing log line
 fn add_log_level_tag(propterty: Property, text: String, html_doc: &mut doclib::html_file::HtmlDoc) {
-    let mut div = Tag::new( TagType::DIV, "".to_string());
+    let mut div = Tag::new(TagType::DIV, "".to_string());
     div.properties.push(propterty);
-    div.children
-        .push(Tag::new(TagType::P, text));
+    div.properties
+        .push(Property::new("onclick", "\"view(this);\""));
+    div.children.push(Tag::new(TagType::P, text));
     html_doc.tags.push(div);
+}
+
+// Add filter button
+fn add_filter_button(
+    property: Property,
+    text: String,
+    class: Property,
+    html_doc: &mut doclib::html_file::HtmlDoc,
+) {
+    let mut filter_button = Tag::new(TagType::BUTTON, text.to_string());
+    filter_button.properties.push(class);
+    filter_button.properties.push(property);
+    html_doc.tags.push(filter_button);
 }

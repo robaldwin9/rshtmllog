@@ -3,31 +3,61 @@ errorFiltered = false;
 debugFiltered = false;
 infoFiltered = false;
 
-
-
 function filter(button){
 	switch(button.className)
 	{
-		case "warn":
-			hideElements("warn", button, warnFiltered);
+		case "WARN":
+			new Worker(hideElements("warn", button, warnFiltered));
 			warnFiltered = !warnFiltered;
 			break;
-		case "error":
-			hideElements("error", button, errorFiltered);
+		case "ERROR":
+			new Worker(hideElements("error", button, errorFiltered));
 			errorFiltered = !errorFiltered;
 			break;
-		case "debug":
-			hideElements("debug", button, debugFiltered);
+		case "DEBUG":
+			new Worker(hideElements("debug", button, debugFiltered));
 			debugFiltered = !debugFiltered;
 			break;
-		case "info":
-			hideElements("info", button, infoFiltered);
+		case "INFO":
+			new Worker(hideElements("info", button, infoFiltered))
 			infoFiltered = !infoFiltered;
-			console.log("info filter");
+			break;
+		case "TRACE":
+			new Worker(hideElements("trace", button, infoFiltered))
+			infoFiltered = !infoFiltered;
 			break;
 		default:
-			console.log("Defuault cause break");
+			console.log("Default cause break");
 			break;
+	}
+}
+
+
+function view(div) {
+
+	if(div.style.height != "100%") {
+		div.style.height = "100%"
+		div.style.lineheight = "100%"
+
+		
+		div.style.wordWrap= "break-word"
+
+		div.firstChild.style.wordWrap= "break-word"
+	
+		div.firstChild.style.whiteSpace = "normal"
+		
+		
+		
+	} else {
+		div.style.height = "3vw"
+		div.style.lineheight = "1.5vw "
+		
+		div.style.overflow  = "hidden"
+		div.style.overflowwrap = "none"
+
+		div.firstChild.style.overflow = "none"
+		div.firstChild.style.overflow = "hidden"
+		div.firstChild.style.whiteSpace = "nowrap"
 	}
 }
 
@@ -43,12 +73,10 @@ function hideElements(classname, buttonRef, filtered) {
 		{
 			if(filtered) {
 				element.style.display = "block";
-				
 			}
 
 			else{
 				element.style.display = "none";
-			
 			}
 			
 		}
